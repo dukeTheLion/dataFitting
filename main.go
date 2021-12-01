@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"os"
+)
 
 func sum(v []float64) float64 {
 	s := 0.0
@@ -12,18 +15,19 @@ func sum(v []float64) float64 {
 	return s
 }
 
-func quadMin(x []float64, y []float64) {
+func quadMin(x []float64, y []float64, sOutput bool) {
 	upr := 0.0
 	lwr := 0.0
 
 	xSum := sum(x)
 	ySum := sum(y)
 
+	var r float64
 	var b1 float64
 	var b0 float64
 	var xMean float64
 	var yMean float64
-	var r float64
+	var out string
 
 	n := float64(len(x))
 
@@ -55,18 +59,39 @@ func quadMin(x []float64, y []float64) {
 
 	r = upr / lwr
 
+	out = "     ┌────────────┬────────────┬────────────┬────────────┬────────────┬────────────┬────────────┬────────────┐\n" +
+		"     |     y      |      x     |     xy     |      x²    |      y²    |     y^     |      e     |      e²    |\n" +
+		"     ├────────────┼────────────┼────────────┼────────────┼────────────┼────────────┼────────────┼────────────┤\n"
+
 	for i := 0; i < int(n); i++ {
-		fmt.Printf("%10.3f %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f\n", y[i], x[i], xy[i], xx[i], yy[i], yc[i], e[i], ee[i])
+		out += fmt.Sprintf(" %03d | %10.3f | %10.3f | %10.3f | %10.3f | %10.3f | %10.3f | %10.3f | %10.3f |\n",
+			i, y[i], x[i], xy[i], xx[i], yy[i], yc[i], e[i], ee[i])
 	}
 
-	fmt.Printf("%10.3f %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f\n", sum(y), sum(x), sum(xy), sum(xx), sum(yy), sum(yc), sum(e), sum(ee))
-	fmt.Printf("b1=%7.4f b0=%7.4f n=%7.4f x|=%7.4f y|=%7.4f up=%7.4f lr=%7.4f R2=%7.4f", b1, b0, n, xMean, yMean, upr, lwr, r)
+	out += "     ├────────────┼────────────┼────────────┼────────────┼────────────┼────────────┼────────────┼────────────┤\n"
 
+	out += fmt.Sprintf(" SUM | %10.3f | %10.3f | %10.3f | %10.3f | %10.3f | %10.3f | %10.3f | %10.3f |\n",
+		sum(y), sum(x), sum(xy), sum(xx), sum(yy), sum(yc), sum(e), sum(ee))
+
+	out += "     └────────────┴────────────┴────────────┴────────────┴────────────┴────────────┴────────────┴────────────┘\n\n"
+
+	out += fmt.Sprintf(" Number of lines ─► %.0f\n", n)
+	out += fmt.Sprintf(" Mean of x ───────► %7.4f\n", xMean)
+	out += fmt.Sprintf(" Mean of y ───────► %7.4f\n", yMean)
+	out += fmt.Sprintf(" R ───────────────► %.4f ÷ %.4f = %7.4f\n", upr, lwr, r)
+	out += fmt.Sprintf(" Func ────────────► f(x) = %.3fx%+.3f \n", b1, b0)
+
+	outputFile, _ := os.Create("Output.txt")
+	outputFile.WriteString(out)
+
+	if sOutput {
+		fmt.Print(out)
+	}
 }
 
 func main() {
 	y := []float64{82, 91, 100, 68, 87, 73, 78, 80, 65, 84, 116, 76, 97, 100, 105, 77, 73, 78}
 	x := []float64{71, 64, 43, 67, 56, 73, 68, 56, 76, 65, 45, 58, 45, 53, 49, 78, 73, 68}
 
-	quadMin(x, y)
+	quadMin(x, y, false)
 }
