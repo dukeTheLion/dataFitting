@@ -1,6 +1,7 @@
 package main
 
 import (
+	"dataFitting/Matrix"
 	"fmt"
 	"os"
 )
@@ -90,8 +91,19 @@ func quadMin(x []float64, y []float64, sOutput bool) {
 }
 
 func main() {
-	y := []float64{82, 91, 100, 68, 87, 73, 78, 80, 65, 84, 116, 76, 97, 100, 105, 77, 73, 78}
-	x := []float64{71, 64, 43, 67, 56, 73, 68, 56, 76, 65, 45, 58, 45, 53, 49, 78, 73, 68}
+	//x := []float64{4.8, 7.7, 10.6, 12.5, 15.4, 18.2, 20.2, 25}
+	//y := []float64{26.5, 26.8, 27.1, 27.3, 27.6, 27.9, 28.1, 28.6}
 
-	quadMin(x, y, false)
+	inverse, err := Matrix.Inverse([][]float64{{2.0, 1, 1, 0},
+		{4, 3, 3, 1},
+		{8, 7, 9, 5},
+		{6, 7, 9, 8}})
+
+	if err != nil {
+		return
+	}
+
+	fmt.Printf("%v", inverse)
+
+	//quadMin(x, y, false)
 }
